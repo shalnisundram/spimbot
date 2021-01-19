@@ -14,7 +14,7 @@ module test;
    initial begin               // initial = run at beginning of simulation
                                // begin/end = associate block with initial
       
-      $dumpfile("test.vcd");  // name of dump file to create
+      $dumpfile("sc2_block.vcd");  // name of dump file to create
       $dumpvars(0, test);     // record all signals of module "test" and sub-modules
                               // remember to change "test" to the correct
                               // module name when writing your own test benches
