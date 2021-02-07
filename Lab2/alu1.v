@@ -17,12 +17,16 @@ endmodule // full_adder
 `define ALU_NOR    3'h6
 `define ALU_XOR    3'h7
 
-// 01x -> arithmetic, 1xx -> logic
+// 01x -> arithmetic, 1xx -> logic, same as ALU datapath from PrairieLearn
 module alu1(out, carryout, A, B, carryin, control);
     output      out, carryout;
     input       A, B, carryin;
     input [2:0] control;
-
+    wire xor_result, logic_result, full_adder_sum;
+    xor xo1(xor_result, B, control[0]);
+    full_adder fa1(full_adder_sum, carryout, A, xor_result, carryin);
+    logicunit l1(logic_result, A, B, control[1:0]);
+    mux2 m1(out, full_adder_sum, logic_result, control[2]);
     // add code here!!!
 
 endmodule // alu1

@@ -7,10 +7,16 @@ module alu32_test;
         $dumpfile("alu32.vcd");
         $dumpvars(0, alu32_test);
 
+        // add more test cases here!
              A = 8; B = 4; control = `ALU_ADD; // try adding 8 and 4
         # 10 A = 2; B = 5; control = `ALU_SUB; // try subtracting 5 from 2
-        // add more test cases here!
-
+        # 10 A = 5; B = 5; control = `ALU_SUB; // try subtracting a number from itself
+        # 10 A = 1; B = 1; control = `ALU_AND;
+        # 10 A = 0; B = 0; control = `ALU_OR;
+        # 10 A = 1; B = 0; control = `ALU_NOR;
+        # 10 A = 0; B = 1; control = `ALU_XOR;
+        # 10 A = 0; B = 1; control = `ALU_NOR;
+        # 10 A = 1; B = 0; control = `ALU_XOR;
         # 10 $finish;
     end
 
