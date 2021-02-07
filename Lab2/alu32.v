@@ -42,6 +42,6 @@ module alu32(out, overflow, zero, negative, A, B, control);
     alu1 a31(out[31], c_out[31], A[31], B[31], c_out[30], control);
 
     assign negative = out[31];
-    xor x1(overflow, c_out[31], control[30]);
-    not n1(zero_flag, out[31]);
+    xor x(overflow, c_out[31], c_out[30]);
+    not n1(zero, out[31]);
 endmodule // alu32
