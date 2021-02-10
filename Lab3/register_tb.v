@@ -11,20 +11,23 @@ module test;
         $dumpfile("register.vcd");
         $dumpvars(0, test);
         # 10  reset = 0;      // stop reseting the register 
+        # 5 
+          enable = 1; // test changes at 5 seconds
+          d = 10;
 
         # 10
           // write 88 to the register
           enable = 1;
           d = 88;
-
-        # 10
+        #10
           // try writing to the register when its disabled
           enable = 0;
           d = 89;
 
         // Add your own testcases here!
+        #10 reset = 1; // test reset works at 45 seconds
 
-        # 700 $finish;
+        # 50 $finish;
     end
     
     initial begin

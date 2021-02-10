@@ -45,11 +45,6 @@ module register(q, d, clk, enable, reset);
     dffe df29(q[29], d[29], clk, enable, reset);
     dffe df30(q[30], d[30], clk, enable, reset);
     dffe df31(q[31], d[31], clk, enable, reset);
-
-   
-
-
-
 endmodule // register
 
 
