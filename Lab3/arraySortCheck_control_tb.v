@@ -49,9 +49,50 @@ module arraySortCheck_control_test;
 	# 2 array = 7; length = 3; go = 1;
 	# 10 go = 0;
   # 20
-        // Add your own testcases here!
+  // Add your own testcases here!
 
-        #10 $finish;
+  // Test a sorted array of length 8
+  circuit.rf.r[2] <= 32'd1;
+  circuit.rf.r[3] <= 32'd2;
+  circuit.rf.r[4] <= 32'd3;
+  circuit.rf.r[5] <= 32'd4;
+  circuit.rf.r[6] <= 32'd5;
+  circuit.rf.r[7] <= 32'd6;
+  circuit.rf.r[8] <= 32'd7;
+  circuit.rf.r[9] <= 32'd8;
+  # 2 array = 2; length = 8; go = 1;
+	# 10 go = 0;
+  # 20
+
+  // test random unsorted with a few identical data entries
+  circuit.rf.r[1] <= 32'd5;
+  circuit.rf.r[2] <= 32'd7;
+  circuit.rf.r[3] <= 32'd1;
+  circuit.rf.r[4] <= 32'd1;
+  circuit.rf.r[5] <= 32'd2;
+  circuit.rf.r[6] <= 32'd3;
+  # 2 array = 1; length = 6; go = 1;
+  # 10 go = 0;
+  # 20
+
+  // test sorted with same data entries
+  circuit.rf.r[1] <= 32'd3;
+  circuit.rf.r[2] <= 32'd3;
+  circuit.rf.r[3] <= 32'd3;
+  circuit.rf.r[4] <= 32'd3;
+  circuit.rf.r[5] <= 32'd3;
+  circuit.rf.r[6] <= 32'd3;
+  # 2 array = 1; length = 6; go = 1;
+  # 10 go = 0;
+  # 20
+
+  // test array of length 1
+  circuit.rf.r[1] <= 32'd3;
+  # 2 array = 1; length = 1; go = 1;
+  # 10 go = 0;
+  # 20
+
+  #10 $finish;
     end
 
 endmodule
