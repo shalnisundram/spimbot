@@ -14,7 +14,7 @@ module register(q, d, clk, enable, reset);
 
 
    //  Your implementation goes here
-   dffe df1(q[0], d[0], clk, enable, reset);
+    dffe df0(q[0], d[0], clk, enable, reset);
     dffe df1(q[1], d[1], clk, enable, reset);
     dffe df2(q[2], d[2], clk, enable, reset);
     dffe df3(q[3], d[3], clk, enable, reset);
