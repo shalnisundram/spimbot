@@ -14,5 +14,26 @@ module mips_decode(rd_src, writeenable, alu_src2, alu_op, except, opcode, funct)
     output [1:0] alu_src2;
     output [2:0] alu_op;
     input  [5:0] opcode, funct;
+    //sub, and, or, nor, xor, addi, andi, ori, xori.
+
+    wire addOut = (opcode == `OP_OTHER0) & (funct == `OP0_ADD); // same opcode for all operations without immediate
+    wire subOut = (opcode == `OP_OTHER0) & (funct == `OP0_SUB); 
+    wire andOut = (opcode == `OP_OTHER0) & (funct == `OP0_AND);
+    wire orOut = (opcode == `OP_OTHER0) & (funct == `OP0_OR);
+    wire norOut = (opcode == `OP_OTHER0) & (funct == `OP0_NOR);
+    wire xorOut = (opcode == `OP_OTHER0) & (funct == `OP0_XOR);
+    wire addiOut = (opcode == `OP_ADDI ); // no funct codes for immediate
+    wire andiOut = (opcode == `OP_ANDI);
+    wire oriOut = (opcode == `OP_ORI);
+    wire xoriOut = (opcode == `OP_XORI);
+    
+    assign rd_src = (addiOut | andiOut | oriOut | xoriOut);
+    assign writeenable = (addOut | subOut | andOut | orOut | norOut | xorOut | addiOut | andiOut | oriOut | xoriOut);
+    assign alu_src2 = (addiOut | andiOut | oriOut | xoriOut);
+
+    assign alu_op[0] = (subOut | orOut | xorOut | oriOut | xoriOut);
+    assign alu_op[1] = (addOut | subOut | norOut | xorOut | addiOut | xoriOut);
+    assign alu_op[2] = (andOut | orOut | norOut | xorOut | andiOut | oriOut | xoriOut);
+    assign except = ~(addOut | subOut | andOut | orOut | norOut | xorOut | addiOut | andiOut | oriOut | xoriOut);
 
 endmodule // mips_decode
