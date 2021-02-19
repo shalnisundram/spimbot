@@ -16,6 +16,8 @@ module decoder_test;
         # 10 opcode = `OP_ORI; // try ori
         # 10 opcode = `OP_XORI; // try xori
 
+        #10 opcode = `OP0_SUBU; // test correct signals for writeenable and except
+
         # 10 $finish;
     end
 
