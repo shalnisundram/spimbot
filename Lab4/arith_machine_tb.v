@@ -20,7 +20,7 @@ module arith_machine_test;
     end
     
     initial
-        $monitor("At time %t, reset = %d pc = %h, inst = %h, except = %h",
+        $monitor("At time %t, reset = %d, pc = %h, inst = %h, except = %h",
                  $time, reset, am.PC_reg.q, am.im.data, except);
 
     // periodically check for the end of simulation.  When it happens
