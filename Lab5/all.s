@@ -15,8 +15,8 @@ main:
 	bne	$9, $0, end
 	beq	$11, $8, target
 
-	lbu	$4, 12($2)	# $4 = be		test load byte unsigned
-	lbu	$5, 13($2)	# $5 = ba
+	lbu	$4, 12($2)	# $4 = 33		test load byte unsigned
+	lbu	$5, 13($2)	# $5 = 02
 	lbu	$6, 14($2)	# $6 = fe
 	lbu	$7, 15($2)	# $7 = ca
 
