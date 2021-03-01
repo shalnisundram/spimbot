@@ -11,7 +11,7 @@ module full_machine(except, clock, reset);
 
     wire [31:0] inst;  
     wire [31:0] PC, nextPC;
-    wire [31:0] rsData, rtData, rdData, sign_out, out, aluTopOut, aluBelowOut, aluBranchOut, imm32, jump, lui_in1; 
+    wire [31:0] rsData, rtData, rdData, sign_out, out, aluTopOut, aluBelowOut, imm32, jump, lui_in1; 
     wire [31:0] topMuxOut, rfMuxOut, sltOut, blOut, memRdOut, data_out, blInput, addmMuxOut, aluAddmOut; // check addmMuxOut bits
     wire [31:0] branch_offset;
     wire [7:0] dataMemMuxOut;
@@ -26,14 +26,14 @@ module full_machine(except, clock, reset);
     register #(32) PC_reg(PC, nextPC, clock, 1'b1, reset);
 
     alu32 topAlu(aluTopOut, , , , PC, 32'h4, `ALU_ADD);
-    alu32 branchAlu(aluBranchOut, , , , aluTopOut, branch_offset, `ALU_ADD); 
+    alu32 belowAlu(aluBelowOut, , , , aluTopOut, branch_offset, `ALU_ADD); 
     alu32 mainAlu(out, overflow, zero, negative, rsData, addmMuxOut, alu_op[2:0]);
     alu32 addmAlu(aluAddmOut, , , , data_out, rtData, `ALU_ADD);
 
     mux2v #(32) sltMux(sltOut, out, 32'b0, slt);
     mux2v #(32) byteLoadMux(blOut, data_out, blInput, byte_load); 
     mux2v #(32) memReadMux(memRdOut, sltOut, blOut, mem_read);
-    mux2v #(32) luiMux(rdData, lui_in1, memRdOut, lui);
+    mux2v #(32) luiMux(rdData, lui_in1, addmMuxOut, lui);
     mux2v #(5) rdMux(rdMuxOut, inst[15:11], inst[20:16], rd_src);
     mux2v #(32) addmMux(addmMuxOut, memRdOut, aluAddmOut, addm);
 
