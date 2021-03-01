@@ -5,6 +5,7 @@
 // reset   (input) - set to 1 to set all registers to zero, set to 0 for normal execution.
 
 module full_machine(except, clock, reset);
+
     output      except;
     input       clock, reset;
 
@@ -34,7 +35,7 @@ module full_machine(except, clock, reset);
     mux2v #(32) memReadMux(memRdOut, sltOut, blOut, mem_read);
     mux2v #(32) luiMux(rdData, lui_in1, memRdOut, lui);
     mux2v #(5) rdMux(rdMuxOut, inst[15:11], inst[20:16], rd_src);
-    mux2v #(32) addmMux(addmMuxOut, aluAddmOut, memRdOut, addm);
+    mux2v #(32) addmMux(addmMuxOut, memRdOut, aluAddmOut, addm);
 
     mux3v #(32) rfMux(rfMuxOut, rtData, imm32, sign_out, alu_src2[1:0]); // check last two params!
 
@@ -62,7 +63,8 @@ module full_machine(except, clock, reset);
     assign blInput = {24'b0, dataMemMuxOut};
     assign lui_in1 = {inst[15:0], 16'b0};
 
-    // for 3v mux, figure out if 16'b0 is least or most significant
-    // figure out what imm16 means
+    //for 3v mux, figure out if 16'b0 is least or most significant
+    //figure out what imm16 means
+    
     
 endmodule // full_machine
