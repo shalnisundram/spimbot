@@ -12,7 +12,7 @@ module full_machine(except, clock, reset);
     wire [31:0] inst;  
     wire [31:0] PC, nextPC;
     wire [31:0] rsData, rtData, rdData, sign_out, out, aluTopOut, aluBelowOut, imm32, jump, lui_in1; 
-    wire [31:0] topMuxOut, rfMuxOut, sltOut, blOut, memRdOut, data_out, blInput, addmMuxOut, aluAddmOut; // check addmMuxOut bits
+    wire [31:0] rfMuxOut, sltOut, blOut, memRdOut, data_out, blInput, addmMuxOut, aluAddmOut; // check addmMuxOut bits
     wire [31:0] branch_offset;
     wire [7:0] dataMemMuxOut;
     wire [2:0] alu_op;
@@ -27,7 +27,7 @@ module full_machine(except, clock, reset);
 
     alu32 topAlu(aluTopOut, , , , PC, 32'h4, `ALU_ADD);
     alu32 belowAlu(aluBelowOut, , , , aluTopOut, branch_offset, `ALU_ADD); 
-    alu32 mainAlu(out, overflow, zero, negative, rsData, addmMuxOut, alu_op[2:0]);
+    alu32 mainAlu(out, , zero, negative, rsData, rfMuxOut, alu_op[2:0]);
     alu32 addmAlu(aluAddmOut, , , , data_out, rtData, `ALU_ADD);
 
     mux2v #(32) sltMux(sltOut, out, 32'b0, slt);
@@ -36,10 +36,12 @@ module full_machine(except, clock, reset);
     mux2v #(32) luiMux(rdData, lui_in1, addmMuxOut, lui);
     mux2v #(5) rdMux(rdMuxOut, inst[15:11], inst[20:16], rd_src);
     mux2v #(32) addmMux(addmMuxOut, memRdOut, aluAddmOut, addm);
+    // mux2v addm1(A, rsData, data_out, addm);
+    // mux2v addm2(mem_addr, out, rsData, addm);
 
     mux3v #(32) rfMux(rfMuxOut, rtData, imm32, sign_out, alu_src2[1:0]); // check last two params!
 
-    mux4v #(32) controlTypeMux(topMuxOut, aluTopOut, aluBelowOut, jump, rsData, control_type); 
+    mux4v #(32) controlTypeMux(nextPC, aluTopOut, aluBelowOut, jump, rsData, control_type); 
     mux4v #(8) dataMemMux(dataMemMuxOut, data_out[31:24], data_out[23:16], data_out[15:8], data_out[7:0], out[1:0]);
     
     // DO NOT comment out or rename this module
@@ -55,6 +57,7 @@ module full_machine(except, clock, reset);
                    inst[31:26], inst[5:0], zero);
 
     assign sign_out = {{16{inst[15]}}, inst[15:0]};
+    assign zero_out = {{16{1'b0}}, inst[15:0]};
 
 	assign jump[31:28] = PC[31:28];
 	assign jump[27:2] = inst[25:0];
@@ -65,6 +68,6 @@ module full_machine(except, clock, reset);
 
     //for 3v mux, figure out if 16'b0 is least or most significant
     //figure out what imm16 means
-    
+
     
 endmodule // full_machine
