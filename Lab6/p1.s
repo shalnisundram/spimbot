@@ -57,7 +57,7 @@ craftable_recipes:
                 for_two:
                         bge $t5, $t0, check_assign
                         if:                      # 2D array indexing: array[row * NUM COLUMNS + col]
-                            mul $t6, $t2, $t0    # need to do a t2 offset?
+                            mul $t6, $t2, $t0    
                             add $t6, $t6, $t5   
                             mul $t6, $t6, 4      # col offset
                             add $t7, $a1, $t6    
@@ -71,7 +71,8 @@ craftable_recipes:
 
                             if_two:
                                 bge $t8, $s0, after_if
-                                sw $t8, 0($t4)  
+                                sw $t8, 0($t4)
+                                lw $s0, 0($t4) 
                                 li $t9, 1        # assigned = 1 
                                 # add $t7, $t7, 1  # increment col
                                 # j for_two
@@ -89,4 +90,5 @@ craftable_recipes:
                         j for_one
 
         out:
+                lw $s0, 0($t4)
                 jr      $ra
