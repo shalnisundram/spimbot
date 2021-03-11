@@ -4,15 +4,15 @@ canv: .space    1024
 
 .text
 
-##void test_draw_line() {
-##    Canvas canvas;
-##    init_square_canvas(5, &canvas);
-##    // Draw a horizontal line.
-##    draw_line(10, 14, &canvas);
-##    // Draw a vertical line.
-##    draw_line(2, 22, &canvas);
-##    print_canvas(&canvas);
-##}
+#void test_draw_line() {
+#    Canvas canvas;
+#    init_square_canvas(5, &canvas);
+#    // Draw a horizontal line.
+#    draw_line(10, 14, &canvas);
+#    // Draw a vertical line.
+#    draw_line(2, 22, &canvas);
+#    print_canvas(&canvas);
+#}
 
 MAIN_STK_SPC = 4
 main:
