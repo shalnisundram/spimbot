@@ -35,4 +35,17 @@
 .globl count_disjoint_regions
 count_disjoint_regions:
         # Your code goes here :)
+        sub $sp, $sp, 40
+        sw $ra, 0($sp)
+        sw $s0, 4($sp)
+        sw $s1, 8($sp)
+        sw $s2, 12($sp)
+        sw $s3, 16($sp)
+        sw $s4, 20($sp)
+        sw $s5, 24($sp)
+        sw $s6, 28($sp)
+        sw $s7, 32($sp)
+        sw $s8, 36($sp)
+
+        
         jr      $ra
