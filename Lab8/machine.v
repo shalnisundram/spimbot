@@ -18,9 +18,22 @@ module machine(clk, reset);
    wire [31:0]  rd1_data, rd2_data, B_data, alu_out_data, load_data, wr_data;
 
    //Your extra wires go here
+   
+   // cp0 wires
+   wire [31:0]  cp0_rd_data;
+   wire [29:0]  EPC;
+
+   // timer wires
+   wire [31:0] t_address, t_data;
+
+   wire TimerAddress, TimerInterrupt, TakenInterrupt, NotIO;
+   wire newMemRead, newMemWrite;
+   wire [31:0]  wb_mux_out;
+   wire [29:0] taken_interr_mux_out;
+   wire [31:0] eret_mux_out;
 
 
-   register #(30, 30'h100000) PC_reg(PC[31:2], next_PC[31:2], clk, /* enable */1'b1, reset);
+   register #(30, 30'h100000) PC_reg(PC[31:2], taken_interr_mux_out, clk, /* enable */1'b1, reset);
    assign PC[1:0] = 2'b0;  // bottom bits hard coded to 00
    adder30 next_PC_adder(PC_plus4, PC[31:2], 30'h1);
    adder30 target_PC_adder(PC_target, PC_plus4, imm[29:0]);
@@ -39,12 +52,23 @@ module machine(clk, reset);
    mux2v #(32) imm_mux(B_data, rd2_data, imm, ALUSrc);
    alu32 alu(alu_out_data, zero, negative, ALUOp, rd1_data, B_data);
 
-   data_mem data_memory(load_data, alu_out_data, rd2_data, MemRead, MemWrite, clk, reset);
+   data_mem data_memory(load_data, alu_out_data, rd2_data, newMemRead, newMemWrite, clk, reset);
 
-   mux2v #(32) wb_mux(wr_data, alu_out_data, load_data, MemToReg);
+   mux2v #(32) wb_mux(wb_mux_out, alu_out_data, load_data, MemToReg);
    mux2v #(5) rd_mux(wr_regnum, rt, rd, RegDst);
-   
+
    //Connect your new modules below
-   
+   mux2v mfco_mux(wr_data, wb_mux_out, cp0_rd_data, MFC0);
+   mux2v eret_mux(eret_mux_out, next_PC, EPC, ERET);
+   mux2v taken_interr_mux(taken_interr_mux_out, eret_mux_out, 30'h20000060, TakenInterrupt);
+
+   cp0 cp01(cp0_rd_data, EPC, TakenInterrupt, rd, rd2_data, next_PC, TimerInterrupt, MTC0, ERET, clk, reset);
+   timer timer1(TimerAddress, TimerInterrupt, load_data, t_address, t_data, MemRead, MemWrite, clk, reset);
+
+   assign NotIO = (~TimerAddress);
+   assign newMemRead = (MemRead & NotIO);
+   assign newMemWrite = (MemWrite & NotIO);
+   assign t_address = alu_out_data;
+   assign t_data = rd2_data;
 
 endmodule // machine
