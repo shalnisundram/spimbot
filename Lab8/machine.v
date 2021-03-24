@@ -62,8 +62,8 @@ module machine(clk, reset);
    mux2v eret_mux(eret_mux_out, next_PC, EPC, ERET);
    mux2v taken_interr_mux(taken_interr_mux_out, eret_mux_out, 30'h20000060, TakenInterrupt);
 
-   cp0 cp01(cp0_rd_data, EPC, TakenInterrupt, rd, rd2_data, next_PC, TimerInterrupt, MTC0, ERET, clk, reset);
-   timer timer1(TimerAddress, TimerInterrupt, load_data, t_address, t_data, MemRead, MemWrite, clk, reset);
+   cp0 cp01(cp0_rd_data, EPC, TakenInterrupt, wr_regnum, rd2_data, next_PC, TimerInterrupt, MTC0, ERET, clk, reset);
+   timer timer1(TimerInterrupt, TimerAddress, load_data, t_address, t_data, MemRead, MemWrite, clk, reset);
 
    assign NotIO = (~TimerAddress);
    assign newMemRead = (MemRead & NotIO);
@@ -72,3 +72,4 @@ module machine(clk, reset);
    assign t_data = rd2_data;
 
 endmodule // machine
+
