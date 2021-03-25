@@ -74,10 +74,85 @@ main:
     sw $t2, VELOCITY
         
     # YOUR CODE GOES HERE!!!!!!
+
+    travel_left:
+        lw $t3, BOT_X
+        bge $t3, 288, turn_down                  
+        li $t2, 10
+        sw $t2, VELOCITY
+        j travel_left
     
+    turn_down:
+        li $t2, 0                                   # set velocity to 0 to turn 
+        sw $t2, VELOCITY                                     
+
+        li $t1, 90                                  # turn 90 degrees towards the bottom of the grid
+        sw $t1, ANGLE
+        li $t1, 1
+        sw $t1, ANGLE_CONTROL
+
+    travel_down:
+        lw $t4, BOT_Y
+        bge $t4, 32, collect_stone
+        li $t2, 10
+        sw $t2, VELOCITY
+        j travel_down  
+    
+    collect_stone:
+        li $t2, 0                                   # set velocity to 0 to break block
+        sw $t2, VELOCITY
+        li $t0, 0x00002503                          # stone is located at (37, 3)
+        sw $t0, BREAK_BLOCK
+        lw $t0, GET_STONE 
+        bge $t0, 1, travel_to_wool
+        j collect_stone
+    
+    travel_to_wool:
+        lw $t4, BOT_Y
+        bge $t4, 288, collect_wool                    # check y coord exceeded
+        li $t2, 10      
+        sw $t2, VELOCITY                              # move down
+        j travel_down      
+
+    collect_wool:
+        li $t2, 0
+        sw $t2, VELOCITY
+        li $t0, 0x00002425                             # wool located at (36, 37)
+        sw $t0, BREAK_BLOCK
+        lw $t0, GET_WOOL
+        bge $t0, 1, turn_to_tree
+        j collect_wool
+
+    turn_to_tree:
+        li $t1, 180                                      # turn 90 degrees towards the left of the grid
+        sw $t1, ANGLE   
+        li $t1, 1
+        sw $t1, ANGLE_CONTROL
+
+    travel_to_tree:
+        lw $t3, BOT_X
+        ble $t3, 56, collect_tree
+        li $t2, 10
+        sw $t2, VELOCITY
+        j travel_to_tree
+
+    collect_tree:
+        li $t2, 0
+        sw $t2, VELOCITY
+        li $t9, 0x00000524                              # tree located at (5, 36)
+        sw $t9, BREAK_BLOCK
+        lw $t9, GET_WOOD
+        bge $t9, 1, craft_stick
+        j collect_tree
+
+    craft_stick:
+        li $t5, 0x00000007
+        sw $t5, CRAFT
+        bge $t5, 1, loop
+        j craft_stick
+
 loop: # Once done, enter an infinite loop so that your bot can be graded by QtSpimbot once 10,000,000 cycles have elapsed
     j loop
-    
 
 .kdata
 chunkIH:    .space 40
@@ -188,3 +263,5 @@ done:
     move    $at, $k1        # Restore $at
 .set at
     eret
+
+jr $ra
