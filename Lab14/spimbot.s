@@ -100,6 +100,11 @@ has_puzzle: .word 0
 inventory:    .word 0:8
 map:          .word 0:1600
 
+###HAS_BONKED...CHECK IF WE NEED THIS##
+has_bonked:    .byte 0
+# -- string literals --
+
+
 .text
 main:
     sub $sp, $sp, 4
@@ -115,6 +120,75 @@ main:
     or      $t4, $t4, 1 # global enable
     mtc0    $t4, $12
 
+##START OF OF EDITS##
+li $t1, 0
+    sw $t1, ANGLE
+    li $t1, 1
+    sw $t1, ANGLE_CONTROL
+    li $t2, 0
+    sw $t2, VELOCITY
+        
+    # YOUR CODE GOES HERE!!!!!!
+
+    move_across_row:
+        li $t6, 0                                 # $t6 holds switch statement to determine if bot should move across row
+        li $t2, 1
+        sw $t2, VELOCITY
+        # sw $t0, BREAK_BLOCK
+        # lw $t0, GET_WOOL
+        lw $t3, BOT_X
+        lw $t4, BOT_Y
+        add $t7, $t4, 8 
+        bge $t3, 159, turn_90_degrees             # hit the right edge of the board
+        blt $t3, 0, turn_90_degrees               # hit the left edge of the board
+        bge $t4, 319, turn_90_degrees             # hit the bottom edge of the board
+        blt $t4, 0, turn_90_degrees               # hit the top edge of the board
+        j move_across_row
+    
+    turn_90_degrees:
+        li $t2, 0                                 # set velocity to 0 to turn 
+        sw $t2, VELOCITY                                     
+
+        li $t1, 90                                # turn 90 degrees
+        sw $t1, ANGLE
+        li $t1, 1
+        sw $t1, ANGLE_CONTROL
+        beq $t6, 1, move_across_row               # if the bot has already moved to a new row, the bot can now move across this new row
+        lw $t4, BOT_Y
+        add $t7, $t4, 8 
+        li $t2, 1
+        sw $t2, VELOCITY
+
+    travel_one:   
+        lw $t4, BOT_Y                    
+        bge $t4, 12, activate_switch             # check bot has moved one tile over
+        j travel_one
+        
+    activate_switch:
+        li $t2, 0                                 # set velocity to 0 to turn 
+        sw $t2, VELOCITY
+        li $t6, 1                                 # switch $t6 to indicate a recent row change
+        j turn_90_degrees
+    
+    # int i = start_pos;
+    # int new_pos = start_pos + 8;
+    # while (until start_pos != new_pos) {
+    #   velocity = 10;
+    # } turn 90; 
+
+
+    # turn_right:
+    #     li $t2, 0                               # set velocity to 0 to turn 
+    #     sw $t2, VELOCITY  
+
+    #     li $t1, 90                              # turn 90 degrees 
+    #     sw $t1, ANGLE
+    #     li $t1, 1
+    #     sw $t1, ANGLE_CONTROL
+    #     li $t5, 0
+
+    
+        ##END OF EDITS##
 infinite:
     j infinite
 
@@ -180,6 +254,9 @@ interrupt_dispatch:                 # Interrupt:
 bonk_interrupt:
     sw      $0, BONK_ACK
     #Fill in your bonk handler code here
+    la      $t0, has_bonked
+    li      $t1, 1
+    sb      $t1, 0($t0)
     j       interrupt_dispatch      # see if other interrupts are waiting
 
 timer_interrupt:
