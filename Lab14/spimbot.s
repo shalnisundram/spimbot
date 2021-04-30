@@ -130,64 +130,79 @@ li $t1, 0
         
     # YOUR CODE GOES HERE!!!!!!
 
+    # int starting_y = BOT_Y;
+    # int new_y = starting_y + 8;
+    # while (starting_y < new_y) {
+    #   velocity = 1;
+    # } 
+    # turn 90 degrees
+
     move_across_row:
-        li $t6, 0                                 # $t6 holds switch statement to determine if bot should move across row
-        li $t2, 1
+        li $t6, 0                                 # $t6: switch to behave differently depending on the edge the bot collides with (set to 1 when bot hits left edge), used line 168
+        li $t2, 8
         sw $t2, VELOCITY
-        # sw $t0, BREAK_BLOCK
-        # lw $t0, GET_WOOL
         lw $t3, BOT_X
         lw $t4, BOT_Y
-        add $t7, $t4, 8 
-        bge $t3, 159, turn_90_degrees             # hit the right edge of the board
-        blt $t3, 0, turn_90_degrees               # hit the left edge of the board
+        add $t7, $t4, 8                           # $t7 holds y-coord of downward consecutive block, used to compare with current y-coord in "travel_down_one" branch
+        bge $t3, 319, turn_90_degrees             # hit the right edge of the board
+        beq $t3, 0, turn_270_degrees              # hit the left edge of the board
         bge $t4, 319, turn_90_degrees             # hit the bottom edge of the board
         blt $t4, 0, turn_90_degrees               # hit the top edge of the board
         j move_across_row
     
     turn_90_degrees:
         li $t2, 0                                 # set velocity to 0 to turn 
-        sw $t2, VELOCITY                                     
+        sw $t2, VELOCITY  
 
         li $t1, 90                                # turn 90 degrees
         sw $t1, ANGLE
-        li $t1, 1
+        li $t1, 0                                 # relative angle
         sw $t1, ANGLE_CONTROL
-        beq $t6, 1, move_across_row               # if the bot has already moved to a new row, the bot can now move across this new row
         lw $t4, BOT_Y
         add $t7, $t4, 8 
-        li $t2, 1
-        sw $t2, VELOCITY
-
-    travel_one:   
-        lw $t4, BOT_Y                    
-        bge $t4, 12, activate_switch             # check bot has moved one tile over
-        j travel_one
-        
-    activate_switch:
+        j travel_down_one
+    
+    turn_270_degrees:
         li $t2, 0                                 # set velocity to 0 to turn 
+        sw $t2, VELOCITY 
+        li $t6, 1                                 # activate switch to indicate bot is on left side, checked in "check_edge" branch
+
+        li $t1, 270                               # turn 270 degrees
+        sw $t1, ANGLE
+        li $t1, 0                                 # relative angle
+        sw $t1, ANGLE_CONTROL
+
+        lw $t4, BOT_Y
+        add $t7, $t4, 8 
+        
+    travel_down_one:                              # travel_down_one branch travels down one block before turning again
+        li $t2, 10
         sw $t2, VELOCITY
-        li $t6, 1                                 # switch $t6 to indicate a recent row change
-        j turn_90_degrees
-    
-    # int i = start_pos;
-    # int new_pos = start_pos + 8;
-    # while (until start_pos != new_pos) {
-    #   velocity = 10;
-    # } turn 90; 
+        lw $t4, BOT_Y                    
+        bge $t4, $t7, check_edge                  # check if bot has moved down one block 
+        j travel_down_one
+        
+    check_edge:
+        li $t2, 0
+        sw $t2, VELOCITY
+        beq $t6, 1, turn_270_degrees_and_move      # checking if $t6 = 1, meaning check if bot is on left edge
+        j turn_360_degrees
 
+    turn_360_degrees:
+        li $t1, 360                                # turn 360 degrees - why?
+        sw $t1, ANGLE
+        li $t1, 0                                  # relative angle
+        sw $t1, ANGLE_CONTROL
+        j move_across_row
 
-    # turn_right:
-    #     li $t2, 0                               # set velocity to 0 to turn 
-    #     sw $t2, VELOCITY  
+    turn_270_degrees_and_move:
+        li $t1, 270
+        sw $t1, ANGLE
+        li $t1, 0                                  # relative angle
+        sw $t1, ANGLE_CONTROL
+        li $t6, 0
+        j move_across_row
 
-    #     li $t1, 90                              # turn 90 degrees 
-    #     sw $t1, ANGLE
-    #     li $t1, 1
-    #     sw $t1, ANGLE_CONTROL
-    #     li $t5, 0
-
-    
         ##END OF EDITS##
 infinite:
     j infinite
